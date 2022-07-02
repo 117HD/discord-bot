@@ -2,13 +2,7 @@ package com.bot.utils
 
 import org.apache.commons.lang.StringUtils
 import org.jsoup.Jsoup
-import java.text.DecimalFormat
-
 import java.text.NumberFormat
-
-
-
-
 
 object Installs {
 

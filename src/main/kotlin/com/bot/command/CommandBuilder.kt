@@ -2,7 +2,8 @@ package com.bot.command
 
 import com.bot.Application
 import com.bot.Roles
-import net.dv8tion.jda.api.entities.emoji.Emoji
+import net.dv8tion.jda.api.EmbedBuilder
+import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.interactions.components.ActionRow
 import net.dv8tion.jda.api.interactions.components.buttons.Button
@@ -21,34 +22,56 @@ class CommandBuilder(var command : String, val types: List<KClass<out Any>>) {
 
     var rights: Roles = Roles.EVERYONE
     var description: String = "Unknown"
+    var hideFromList: Boolean = false
+    var private: Boolean = false
+    var embedBuilder: EmbedBuilder? = null
     var aliases: List<String> = emptyList()
     var buttons: MutableList<Button> = emptyList<Button>().toMutableList()
     private var message: String? = null
-
     fun description(builder: () -> String) { this.description = builder() }
+    fun sendPrivate(builder: () -> Boolean) { this.private = builder() }
     fun requiredRoles(builder: () -> Roles) { this.rights = builder() }
+    fun hide(builder: () -> Boolean) { this.hideFromList = builder() }
     fun setAliases(builder: () -> List<String>) { this.aliases = builder() }
     fun addButtons(builder: () -> List<Button>) { this.buttons = builder().toMutableList() }
     fun addButton(builder: () -> Button) { this.buttons.add(builder()) }
     fun message(content: () -> String) { message = content() }
-
+    fun embed(content: () -> EmbedBuilder) { embedBuilder = content() }
     fun execute(inputs : Array<String>, event: MessageReceivedEvent) {
 
-        println(inputs.toString())
         if(!typeCheck(types, inputs)) {
-            //WRONG ARGS SEND MESSAGE
+            val messageData = MessageBuilder()
+            messageData.setEmbeds(Application.commandsList().build())
+            event.author.openPrivateChannel().flatMap {
+                it.sendMessage(messageData.build())
+            }.queue()
+
         } else {
+            val messageData = MessageBuilder()
+
             if(message != null) {
-                val message = event.channel.sendMessage(message!!)
-                if (buttons.isNotEmpty()) {
-                    val rows : MutableList<ActionRow> = emptyList<ActionRow>().toMutableList()
-                    buttons.forEach {
-                        rows.add(ActionRow.of(it))
-                    }
-                    message.setActionRows(rows)
-                }
-                message.queue()
+                messageData.setContent(message)
             }
+            if(embedBuilder != null) {
+                messageData.setEmbeds(embedBuilder!!.build())
+            }
+
+            if (buttons.isNotEmpty()) {
+                val rows : MutableList<ActionRow> = emptyList<ActionRow>().toMutableList()
+                buttons.forEach {
+                    rows.add(ActionRow.of(it))
+                }
+                messageData.setActionRows(rows)
+            }
+
+            if(private) {
+                event.author.openPrivateChannel().flatMap {
+                    it.sendMessage(messageData.build())
+                }.queue()
+            } else {
+                event.channel.sendMessage(messageData.build()).queue()
+            }
+
         }
     }
 
@@ -60,6 +83,7 @@ fun buildCommand(command : String,types: List<KClass<out Any>> = emptyList(), bu
     commands[bld.command] = bld
     commandsSlash[bld.command] = bld.description
     bld.aliases.forEach {
+        bld.hideFromList = true
         commands[it] = bld
         commandsSlash[it] = bld.description
     }

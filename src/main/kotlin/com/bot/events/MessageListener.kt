@@ -13,9 +13,7 @@ class MessageListener : ListenerAdapter() {
     override fun onMessageReceived(event: MessageReceivedEvent) {
         val author = event.author
         val message: Message = event.message
-        val channel = event.channel
         val msg: String = message.contentDisplay
-        val bot = author.isBot
 
         when(event.channelType) {
             ChannelType.TEXT -> {
@@ -24,8 +22,9 @@ class MessageListener : ListenerAdapter() {
                     val commandName = parts[0].lowercase().replace(">","")
                     when(commands.containsKey(commandName))  {
                         true ->  commands[parts[0].lowercase().replace(">","")]!!.execute(parts.drop(1).toTypedArray(),event)
-                        false -> event.author.openPrivateChannel().flatMap { it.sendMessage("This is no command") }.queue()
+                        false -> event.author.openPrivateChannel().flatMap { it.sendMessage("Command $msg not Found") }.queue()
                     }
+                    event.message.delete().queue()
                 }
             }
 

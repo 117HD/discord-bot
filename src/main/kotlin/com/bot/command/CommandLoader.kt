@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 import org.reflections.Reflections
 import org.reflections.scanners.MethodAnnotationsScanner
+import org.reflections.scanners.Scanners
 import org.reflections.util.ClasspathHelper
 import org.reflections.util.ConfigurationBuilder
 import java.lang.reflect.Method
@@ -20,7 +21,7 @@ object CommandLoader {
         val time = measureTimeMillis {
             val reflections = Reflections(
                 ConfigurationBuilder().setUrls(ClasspathHelper.forPackage("com.bot.command.impl")).setScanners(
-                    MethodAnnotationsScanner()
+                    Scanners.MethodsAnnotated
                 )
             )
 
@@ -36,9 +37,6 @@ object CommandLoader {
         val list = emptyList<SlashCommandData>().toMutableList()
         commandsSlash.forEach { list.add(Commands.slash(it.key,it.value)) }
         jda.updateCommands().addCommands(list)
-
-
-
     }
 
 }
