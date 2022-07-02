@@ -1,14 +1,14 @@
 package com.bot
 
 import com.bot.PropertiesData.Companion.getPropString
+import com.bot.command.CommandLoader
+import com.bot.events.MessageListener
 import com.bot.utils.Installs
 import mu.KotlinLogging
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
-import java.util.*
 import kotlin.system.measureTimeMillis
-
 
 object Application {
 
@@ -25,8 +25,10 @@ object Application {
             PropertiesManager.loadProps()
             jda = JDABuilder.
                 createDefault(getPropString(PropertiesData.BOT_KEY)).
-                setActivity(Activity.watching("Active Installs ${Installs.getInstalls()}"))
+                setActivity(Activity.watching("Active Installs ${Installs.getInstalls()}")).
+                addEventListeners(MessageListener())
            .build().awaitReady()
+           CommandLoader.init()
         }
 
         logger.info { "117 Bot Started in $time (ms)" }
