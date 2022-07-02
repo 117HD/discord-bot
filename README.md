@@ -22,6 +22,15 @@ bot.prefix=<
 ```
 3) Import and press Run
 
+## Arguments
+
+These will override the Props Settings
+
+```properties
+-token:34
+```
+
+
 ## Contributing
 Please take a look at our [contributing](https://github.com/117HD/discord-bot/CONTRIBUTING.md) guidelines if you're interested in helping!
 

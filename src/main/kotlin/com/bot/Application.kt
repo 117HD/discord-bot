@@ -23,12 +23,18 @@ object Application {
 
     lateinit var jda : JDA
 
-    fun initialize() {
+    fun initialize(args : Array<String>) {
+
         logger.info { "Starting 117 Bot" }
         val time = measureTimeMillis {
             PropertiesManager.loadProps()
+            val token = when(args.isNotEmpty()) {
+                true -> args[0].replace("-token:","")
+                false -> getPropString(PropertiesData.BOT_KEY)
+            }
+
             jda = JDABuilder.
-                createDefault(getPropString(PropertiesData.BOT_KEY)).
+                createDefault(token).
                 setActivity(Activity.watching("Installs: ${Installs.getInstalls()}")).
                 addEventListeners(MessageListener(), UserCountListener())
            .build().awaitReady()
@@ -73,8 +79,8 @@ object Application {
 
 }
 
-fun main() {
-    Application.initialize()
+fun main(args : Array<String>) {
+    Application.initialize(args)
 }
 
 
