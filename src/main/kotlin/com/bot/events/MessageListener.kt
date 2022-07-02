@@ -1,5 +1,8 @@
 package com.bot.events
 
+import com.bot.PropertiesData
+import com.bot.PropertiesData.Companion.getPropString
+import com.bot.PropertiesManager
 import com.bot.command.commands
 import mu.KotlinLogging
 import net.dv8tion.jda.api.entities.*
@@ -17,11 +20,11 @@ class MessageListener : ListenerAdapter() {
 
         when(event.channelType) {
             ChannelType.TEXT -> {
-                if(msg.startsWith(">")) {
+                if(msg.startsWith(getPropString(PropertiesData.BOT_PREFIX)!!,true)) {
                     val parts = msg.split(" ",ignoreCase = true)
-                    val commandName = parts[0].lowercase().replace(">","")
+                    val commandName = parts[0].lowercase().replace(getPropString(PropertiesData.BOT_PREFIX)!!,"")
                     when(commands.containsKey(commandName))  {
-                        true ->  commands[parts[0].lowercase().replace(">","")]!!.execute(parts.drop(1).toTypedArray(),event)
+                        true ->  commands[parts[0].lowercase().replace(getPropString(PropertiesData.BOT_PREFIX)!!,"")]!!.execute(parts.drop(1).toTypedArray(),event)
                         false -> event.author.openPrivateChannel().flatMap { it.sendMessage("Command $msg not Found") }.queue()
                     }
                     event.message.delete().queue()
