@@ -1,5 +1,6 @@
 package com.bot.events
 
+import com.bot.Application.banned
 import com.bot.PropertiesData
 import com.bot.PropertiesData.Companion.getPropString
 import com.bot.PropertiesManager
@@ -17,6 +18,13 @@ class MessageListener : ListenerAdapter() {
         val author = event.author
         val message: Message = event.message
         val msg: String = message.contentDisplay
+
+        val words = msg.lowercase().split("\\s+".toRegex())
+        val containsBadWords = words.firstOrNull { it in banned } != null
+
+        if(containsBadWords) {
+            event.message.delete().queue()
+        }
 
         when(event.channelType) {
             ChannelType.TEXT -> {

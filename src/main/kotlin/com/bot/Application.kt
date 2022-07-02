@@ -57,6 +57,20 @@ object Application {
         return eb
     }
 
+    val banned = listOf(
+        "C.0m", "C 0m", "cashapp",
+        "coingame", "trusted reviewer", "gpsta",
+        "runestake", "sell gp", "buy gp",
+        "infernocape", "cheapgp", "Runestake",
+        "Ç", "ü", "é", "â", "ä", "à", "å", "ª", 
+        "º", "ç", "ê", "ë", "è", "ï", "î", 
+        "ì", "¡", "Ä", "Å", "É", 
+        "æ", "Æ", "ô", "ö", "ò", "û",
+        "ù", "ÿ", "Ö", "Ü", "¢", "£",
+        "¥", "₧", "ƒ", "á", "í", "ó", "ú", "ñ", "Ñ", "ª", "α",
+        "ß", "µ", "Φ", "Θ", "Ω", "δ"
+    )
+
 }
 
 fun main() {
