@@ -79,4 +79,13 @@ class BasicCommands {
         embed { Application.commandsList() }
     }
 
+    @DiscordCommand
+    fun settingGuide() = buildCommand("settings") {
+        message { "Oh Hey! I see you need some help with settings here." }
+        description { "Setting Guide" }
+        addButtons { listOf(
+            Button.link("https://github.com/RS117/RLHD/blob/master/settings-guide.md", "Settings Guide"),
+        )}
+    }
+
 }
