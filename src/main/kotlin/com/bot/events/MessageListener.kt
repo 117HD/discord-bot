@@ -1,21 +1,25 @@
 package com.bot.events
 
+import com.bot.Application
 import com.bot.Application.banned
 import com.bot.PropertiesData
 import com.bot.PropertiesData.Companion.getPropString
-import com.bot.PropertiesManager
 import com.bot.command.commands
+import com.bot.command.commandsSlash
 import mu.KotlinLogging
 import net.dv8tion.jda.api.entities.*
+import net.dv8tion.jda.api.entities.channel.ChannelType
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
+import net.dv8tion.jda.api.interactions.commands.OptionType
+import net.dv8tion.jda.api.interactions.commands.build.Commands
 
 class MessageListener : ListenerAdapter() {
 
     private val logger = KotlinLogging.logger {}
 
     override fun onMessageReceived(event: MessageReceivedEvent) {
-        val author = event.author
         val message: Message = event.message
         val msg: String = message.contentDisplay
 
@@ -48,5 +52,10 @@ class MessageListener : ListenerAdapter() {
 
     }
 
+    override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
+        if(commands.containsKey(event.name)) {
+            event.reply(commands[event.name]!!.execute().build()).queue()
+        }
+    }
 
 }

@@ -32,7 +32,7 @@ object Installs {
     private fun getRuneliteVerison(): String {
         return try {
             val doc = Jsoup.connect("https://static.runelite.net/bootstrap.json")
-                .userAgent("Mozilla").timeout(3000).ignoreContentType(true)
+                .userAgent("Mozilla").ignoreContentType(true)
                 .get()
             StringUtils.substringBetween(doc.body().text(), "\"version\": \"", "\" }")
         } catch (e: Exception) {

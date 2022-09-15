@@ -3,10 +3,10 @@ package com.bot.command
 import com.bot.Application
 import com.bot.Roles
 import net.dv8tion.jda.api.EmbedBuilder
-import net.dv8tion.jda.api.MessageBuilder
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.interactions.components.ActionRow
 import net.dv8tion.jda.api.interactions.components.buttons.Button
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 import kotlin.reflect.KClass
 
 @DslMarker
@@ -40,14 +40,14 @@ class CommandBuilder(var command : String, val types: List<KClass<out Any>>) {
     fun execute(inputs : Array<String>, event: MessageReceivedEvent) {
 
         if(!typeCheck(types, inputs)) {
-            val messageData = MessageBuilder()
+            val messageData = MessageCreateBuilder()
             messageData.setEmbeds(Application.commandsList().build())
             event.author.openPrivateChannel().flatMap {
                 it.sendMessage(messageData.build())
             }.queue()
 
         } else {
-            val messageData = MessageBuilder()
+            val messageData = MessageCreateBuilder()
 
             if(message != null) {
                 messageData.setContent(message)
@@ -61,7 +61,7 @@ class CommandBuilder(var command : String, val types: List<KClass<out Any>>) {
                 buttons.forEach {
                     rows.add(ActionRow.of(it))
                 }
-                messageData.setActionRows(rows)
+                messageData.addComponents(rows)
             }
 
             if(private) {
@@ -73,6 +73,29 @@ class CommandBuilder(var command : String, val types: List<KClass<out Any>>) {
             }
 
         }
+    }
+
+    fun execute(): MessageCreateBuilder {
+
+        val messageData = MessageCreateBuilder()
+
+        if (message != null) {
+            messageData.setContent(message)
+        }
+        if (embedBuilder != null) {
+            messageData.setEmbeds(embedBuilder!!.build())
+        }
+
+        if (buttons.isNotEmpty()) {
+            val rows: MutableList<ActionRow> = emptyList<ActionRow>().toMutableList()
+            buttons.forEach {
+                rows.add(ActionRow.of(it))
+            }
+            messageData.addComponents(rows)
+        }
+
+        return messageData
+
     }
 
 }

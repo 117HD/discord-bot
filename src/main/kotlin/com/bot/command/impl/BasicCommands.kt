@@ -32,7 +32,7 @@ class BasicCommands {
     @DiscordCommand
     fun hdos() = buildCommand("hdos") {
         description { "Invite Link for HDOS (EWWW ;))." }
-        message { "Oh it seems like you are looking for hdos! While we are much better ;) maybe look here https://discord.gg/WrCGAj8MBv" }
+        message { "Oh it seems like you are looking for hdos! While we are much better ;) maybe look here https://discord.gg/hdos" }
     }
 
     @DiscordCommand

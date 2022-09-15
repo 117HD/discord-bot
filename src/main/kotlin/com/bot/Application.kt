@@ -11,6 +11,9 @@ import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
+import net.dv8tion.jda.api.interactions.commands.OptionType
+import net.dv8tion.jda.api.interactions.commands.build.Commands
+import net.dv8tion.jda.api.requests.GatewayIntent
 import java.awt.Color
 import kotlin.system.measureTimeMillis
 
@@ -36,20 +39,20 @@ object Application {
             jda = JDABuilder.
                 createDefault(token).
                 setActivity(Activity.watching("Installs: ${Installs.getInstalls()}")).
-                addEventListeners(MessageListener(), UserCountListener())
+                addEventListeners(MessageListener(), UserCountListener()).enableIntents(
+                GatewayIntent.MESSAGE_CONTENT,
+                GatewayIntent.DIRECT_MESSAGES,
+                GatewayIntent.GUILD_MEMBERS,
+                GatewayIntent.GUILD_WEBHOOKS,
+                GatewayIntent.MESSAGE_CONTENT
+            )
            .build().awaitReady()
            CommandLoader.init()
-           updateMemeberCount()
         }
-
         logger.info { "117 Bot Started in $time (ms)" }
     }
 
-    fun updateMemeberCount() {
-        jda.guilds.first().getTextChannelById(886747147343626270L)!!.manager.setName(
-            "Member Count: ${jda.guilds.first().memberCount}"
-        )
-    }
+
 
     fun commandsList() : EmbedBuilder {
         val eb = EmbedBuilder()

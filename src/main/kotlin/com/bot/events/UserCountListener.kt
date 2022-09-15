@@ -9,11 +9,11 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter
 class UserCountListener : ListenerAdapter() {
 
     override fun onGuildMemberJoin(event: GuildMemberJoinEvent) {
-        Application.updateMemeberCount()
+        //Application.updateMemeberCount()
     }
 
     override fun onGuildMemberRemove(event: GuildMemberRemoveEvent) {
-        Application.updateMemeberCount()
+       // Application.updateMemeberCount()
     }
 
 }

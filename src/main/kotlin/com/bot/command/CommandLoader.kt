@@ -35,8 +35,11 @@ object CommandLoader {
         }
         logger.info { "Commands Loaded in $time ms [Commands Registered ${commands.size}]" }
         val list = emptyList<SlashCommandData>().toMutableList()
-        commandsSlash.forEach { list.add(Commands.slash(it.key,it.value)) }
-        jda.updateCommands().addCommands(list)
+        commandsSlash.forEach {
+            list.add(Commands.slash(it.key.lowercase(),it.value))
+        }
+
+        jda.guilds.first().updateCommands().addCommands(list).queue()
     }
 
 }
