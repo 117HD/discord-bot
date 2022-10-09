@@ -10,9 +10,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Set Up ENV
         run: |
-          echo "${{ secrets.SQL_URI }}" > .env
-          echo "${{ secrets.DISCORD_ROUTE_TOKEN}}" >> .env
-          echo "${{ secrets.REDIS_PASSWORD}}" >> .env
+          echo "${{ secrets.BOT_PREFIX }}" > config.properties
+          echo "${{ secrets.DISCORD_BOT_TOKEN}}" >> config.properties
 
   deploy:
     runs-on: self-hosted
