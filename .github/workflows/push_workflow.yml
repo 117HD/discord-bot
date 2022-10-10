@@ -1,0 +1,22 @@
+name: Push workflow
+on:
+  push:
+    branches: [main]
+
+jobs:
+  checkout:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set Up ENV
+        run: |
+          echo "${{ secrets.BOT_PREFIX }}" > config.properties
+          echo "${{ secrets.DISCORD_BOT_TOKEN}}" >> config.properties
+
+  deploy:
+    runs-on: self-hosted
+    needs: checkout
+    steps:
+      - name: Docker
+        run: |
+          sudo docker-compose up --build -d

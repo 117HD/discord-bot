@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: 117hd-discord:latest
+    ports:
+      - "4000:4000"
+    env_file:
+      - config.properties
