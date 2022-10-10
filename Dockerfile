@@ -1,9 +1,13 @@
-FROM python:3.10-slim
+FROM gradle:6.6.1-jdk14 as BUILD
 
-WORKDIR /code
-COPY . /code/
+COPY . .
+RUN gradle build
 
-EXPOSE 4000
+FROM openjdk:15-jdk-slim
 
-RUN pip install -r requirements.txt
-CMD ["uvicorn", "api.app:app", "--host", "0.0.0.0", "--port", "4000"] 
+COPY --from=BUILD /home/gradle/build/libs/discord-bot-*-all.jar /usr/local/lib/discord-bot.jar
+
+RUN mkdir /git
+ENV BOT_GIT_DIRECTORY /git
+
+ENTRYPOINT ["java", "-Xms2G", "-Xmx2G", "-jar", "/usr/local/lib/discord-bot.jar"]
