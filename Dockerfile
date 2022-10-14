@@ -1,9 +1,9 @@
-FROM openjdk:12-jdk-alpine
+FROM gradle AS build
 
 WORKDIR /code
 COPY . /code/
 
-EXPOSE 4000
-
-RUN gradle init
-CMD ["gradle","run"] 
+RUN gradle --version
+# EXPOSE 4000
+# RUN gradle init
+# CMD ["gradle","run"] 
