@@ -8,10 +8,10 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v2
-      - name: Set Up ENV
+      - name: Set up config.properties
         run: |
-          echo "${{ secrets.BOT_PREFIX }}" > .env
-          echo "${{ secrets.DISCORD_BOT_KEY }}" >> .env
+          echo "${{ secrets.BOT_PREFIX }}" > config.properties
+          echo "${{ secrets.DISCORD_BOT_KEY }}" >> config.properties
   deploy:
     runs-on: self-hosted
     needs: checkout
