@@ -38,3 +38,4 @@ isvps
 
 *.properties
 firebase.json
+.env
