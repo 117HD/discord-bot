@@ -67,8 +67,20 @@ class BasicCommands {
             eb.addField("macOS:", "Open a terminal window and run `/Applications/RuneLite.app/Contents/MacOS/RuneLite --clientargs --safe-mode`", false)
             eb.addField("Linux:", "Open a terminal window and run `$(which runelite) --clientargs --safe-mode`", false)
             eb.setThumbnail("https://static.wikia.nocookie.net/2007scape/images/9/97/Unknown_NPC.png/revision/latest/scale-to-width-down/115?cb=20180507162450")
+        }
+    }
 
-            eb
+    @DiscordCommand
+    fun test() = buildCommand("test") {
+        description { "Hooder Is." }
+        embed {
+            val eb = EmbedBuilder()
+            eb.setTitle("LHooder Is", null)
+            eb.setColor(Color.GREEN)
+
+            eb.addField("Cool?", "Yes.", false)
+            eb.addField("Ferrariic — Cool ?:", "Yes", false)
+
         }
     }
 
