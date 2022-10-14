@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM openjdk:12-jdk-alpine
 
 WORKDIR /code
 COPY . /code/
