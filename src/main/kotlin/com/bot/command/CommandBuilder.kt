@@ -21,7 +21,7 @@ val commandsSlash : MutableMap<String, String> = emptyMap<String,String>().toMut
 class CommandBuilder(var command : String, val types: List<KClass<out Any>>) {
 
     var rights: Roles = Roles.EVERYONE
-    var description: String = "Unknown"
+    var description: String = "No description provided"
     var hideFromList: Boolean = false
     var private: Boolean = false
     var embedBuilder: EmbedBuilder? = null

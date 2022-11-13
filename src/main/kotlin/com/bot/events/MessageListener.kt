@@ -1,19 +1,15 @@
 package com.bot.events
 
-import com.bot.Application
 import com.bot.Application.banned
 import com.bot.PropertiesData
 import com.bot.PropertiesData.Companion.getPropString
 import com.bot.command.commands
-import com.bot.command.commandsSlash
 import mu.KotlinLogging
 import net.dv8tion.jda.api.entities.*
 import net.dv8tion.jda.api.entities.channel.ChannelType
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
-import net.dv8tion.jda.api.interactions.commands.OptionType
-import net.dv8tion.jda.api.interactions.commands.build.Commands
 
 class MessageListener : ListenerAdapter() {
 
@@ -37,16 +33,16 @@ class MessageListener : ListenerAdapter() {
                     val commandName = parts[0].lowercase().replace(getPropString(PropertiesData.BOT_PREFIX)!!,"")
                     when(commands.containsKey(commandName))  {
                         true ->  commands[parts[0].lowercase().replace(getPropString(PropertiesData.BOT_PREFIX)!!,"")]!!.execute(parts.drop(1).toTypedArray(),event)
-                        false -> event.author.openPrivateChannel().flatMap { it.sendMessage("Command $msg not Found") }.queue()
+                        false -> event.author.openPrivateChannel().flatMap { it.sendMessage("Command '$msg' not found") }.queue()
                     }
                     event.message.delete().queue()
                 }
             }
 
             ChannelType.PRIVATE -> {
-                event.channel.sendMessage("Sorry we don't like you yet")
+                event.channel.sendMessage("Sorry, our bot only accepts messages in our Discord server.")
             }
-            else -> { logger.info { "Unhandled Channel type ${event.channelType.name}" }  }
+            else -> { logger.info { "Unhandled channel type: ${event.channelType.name}" }  }
         }
 
 
