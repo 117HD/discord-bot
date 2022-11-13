@@ -13,74 +13,68 @@ class BasicCommands {
     @DiscordCommand
     fun githubLinks() = buildCommand("github") {
         setAliases { listOf("issues","org") }
-        message { "Oh Hey! I see you are looking for some git links." }
-        description { "List of all the git links" }
+        description { "Post a list of relevant GitHub links" }
+        message { "List of relevant GitHub links:" }
         addButtons { listOf(
-            Button.link("https://github.com/117HD", "Github Organization").withEmoji(Emoji.fromFormatted("<:github:849286315580719104>")),
-            Button.link("https://github.com/117HD/RLHD", "117 HD Plugin").withEmoji(Emoji.fromFormatted("<:github:849286315580719104>")),
-            Button.link("https://github.com/117HD/RLHD/issues", "117 HD Issues").withEmoji(Emoji.fromFormatted("<:github:849286315580719104>"))
+            Button.link("https://github.com/117HD", "Organization").withEmoji(Emoji.fromFormatted("<:github:849286315580719104>")),
+            Button.link("https://github.com/117HD/RLHD", "Plugin Repository").withEmoji(Emoji.fromFormatted("<:github:849286315580719104>")),
+            Button.link("https://github.com/117HD/RLHD/issues", "Issues").withEmoji(Emoji.fromFormatted("<:github:849286315580719104>"))
         )}
     }
 
     @DiscordCommand
     fun discordLink() = buildCommand("discord") {
         setAliases { listOf("invite") }
-        description { "Invite Link for 117HD." }
-        message { "Oh it seems like you are looking for a invite link here! https://discord.gg/U4p6ChjgSE" }
+        description { "Post an invite link to this Discord" }
+        message { "The invite link to this Discord: https://discord.gg/U4p6ChjgSE" }
     }
 
     @DiscordCommand
     fun hdos() = buildCommand("hdos") {
-        description { "Invite Link for HDOS (EWWW ;))." }
-        message { "Oh it seems like you are looking for hdos! While we are much better ;) maybe look here https://discord.gg/hdos" }
+        description { "Post an invite link to the HDOS Discord" }
+        message { "If you are looking for a recreation of 2009-era RuneScape, check out HDOS: https://discord.gg/hdos" }
     }
 
     @DiscordCommand
     fun logs() = buildCommand("logs") {
         setAliases { listOf("errors") }
-        description { "Shows where to get the client logs." }
+        description { "Post instructions for locating RuneLite's log files" }
         embed {
             val eb = EmbedBuilder()
             eb.setColor(Color.CYAN)
-            eb.setTitle("Locating Your RuneLite Log Files:")
-            eb.addField("If Your Client Failed to Open:", "Click the `Open logs folder` button.",false)
-            eb.addField("Using the Screenshots Button:", "Open the screenshot directory by right-clicking  📷`Camera` button on the RuneLite title bar, navigate 1 directory up, then open `logs` folder.",false)
-            eb.addField("Windows:", "Navigate to `%userprofile%/.runelite/logs`",false)
-            eb.addField("macOS/Linux:", "Navigate to `home/.runelite/logs`",false)
-
-            eb.setFooter("This guide is from the RuneLite Discord Bot. https://github.com/runelite/runelite-discord-bot")
-            eb.setThumbnail("https://camo.githubusercontent.com/c9ab595fc563db74412d31763e2bd668cd26b0368e0d63820e63a9893c76f7ce/68747470733a2f2f72756e656c6974652e6e65742f696d672f6c6f676f2e706e67")
-            eb
+            eb.setTitle("Accessing Your RuneLite Log Files:")
+            eb.addField("Windows:",
+                "Press the Windows key + R, then paste in the following path into the popup window:\n" +
+                "```\n%userprofile%/.runelite/logs\n```\n" +
+                "Once you are there, drag `client` or `client.log` into this Discord channel.",false)
+            eb.addField("macOS:",
+                "Open Finder and press Cmd + Shift + G, then paste the following path into the popup window:\n" +
+                "```\n~/.runelite/logs\n```\n" +
+                "Once you are there, drag `client` or `client.log` into this Discord channel.",false)
+            eb.addField("Linux:",
+                "Navigate to the following path in a file browser:\n" +
+                "```\n~/.runelite/logs\n```\n" +
+                "Once you are there, drag `client` or `client.log` into this Discord channel.",false)
         }
     }
 
     @DiscordCommand
     fun safeMode() = buildCommand("safemode") {
-        description { "How to activate safemode." }
+        description { "Post instructions for launching RuneLite in safe mode" }
         embed {
             val eb = EmbedBuilder()
             eb.setTitle("Launching RuneLite in Safe Mode", null)
             eb.setColor(Color.GREEN)
 
             eb.addField("What is Safe Mode?:", "Launching RuneLite in safe mode disables the loading of third-party plugins. If after installing the HD plugin you cannot get RuneLite to remain open please run the applicable command below so that you can uninstall the plugin. Afterwards you can reopen RuneLite normally.", false)
-            eb.addField("Windows:", "Open your Start Menu and select `Run` (or press `Win + R`). Paste in and run the following: `\"%localappdata%\\runelite\\runelite.exe\" --clientargs --safe-mode`", false)
-            eb.addField("macOS:", "Open a terminal window and run `/Applications/RuneLite.app/Contents/MacOS/RuneLite --clientargs --safe-mode`", false)
-            eb.addField("Linux:", "Open a terminal window and run `$(which runelite) --clientargs --safe-mode`", false)
+            eb.addField("Windows:", "Press the Windows key + R and paste in the following command:\n" +
+                "```\n\"%localappdata%\\runelite\\runelite.exe\" --clientargs --safe-mode\n```", false)
+            eb.addField("macOS:", "Open a terminal window and run the following command:\n" +
+                "```\n/Applications/RuneLite.app/Contents/MacOS/RuneLite --clientargs --safe-mode\n```", false)
+            eb.addField("Linux:", "Open a terminal window and run the following command:\n" +
+                "```\n$(which runelite) --clientargs --safe-mode\n```\n" +
+                "If you are using the AppImage, or some alternative way of launching RuneLite, append the same arguments to your command.", false)
             eb.setThumbnail("https://static.wikia.nocookie.net/2007scape/images/9/97/Unknown_NPC.png/revision/latest/scale-to-width-down/115?cb=20180507162450")
-        }
-    }
-
-    @DiscordCommand
-    fun test() = buildCommand("test") {
-        description { "Hooder Is." }
-        embed {
-            val eb = EmbedBuilder()
-            eb.setTitle("LHooder Is", null)
-            eb.setColor(Color.GREEN)
-
-            eb.addField("Cool?", "Yes.", false)
-            eb.addField("Ferrariic — Cool ?:", "Yes", false)
-
         }
     }
 
@@ -93,11 +87,10 @@ class BasicCommands {
 
     @DiscordCommand
     fun settingGuide() = buildCommand("settings") {
-        message { "Oh Hey! I see you need some help with settings here." }
-        description { "Setting Guide" }
+        description { "Post a link to our settings guide" }
+        message { "See our settings guide for more details on how each setting may impact performance:" }
         addButtons { listOf(
             Button.link("https://github.com/RS117/RLHD/blob/master/settings-guide.md", "Settings Guide"),
         )}
     }
-
 }
