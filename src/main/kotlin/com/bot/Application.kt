@@ -13,6 +13,8 @@ import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.requests.GatewayIntent
 import java.awt.Color
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import kotlin.system.measureTimeMillis
 
 object Application {
@@ -36,7 +38,7 @@ object Application {
 
             jda = JDABuilder
                 .createDefault(token)
-                .setActivity(Activity.watching("installs: ${Installs.getInstalls()}"))
+                .setActivity(Activity.watching("Installs: ${Installs.getInstalls()}"))
                 .addEventListeners(MessageListener(), UserCountListener())
                 .enableIntents(
                     GatewayIntent.MESSAGE_CONTENT,
@@ -49,6 +51,11 @@ object Application {
                 .awaitReady()
            CommandLoader.init()
         }
+
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate({
+            jda.presence.activity = Activity.watching("Installs: ${Installs.getInstalls()}")
+        }, 0, 1, TimeUnit.HOURS)
+
         logger.info { "117 Bot Started in $time (ms)" }
     }
 
