@@ -5,14 +5,16 @@ import com.bot.command.CommandLoader
 import com.bot.command.commands
 import com.bot.events.MessageListener
 import com.bot.events.UserCountListener
-import com.bot.utils.Installs
+import com.bot.utils.Stats
 import mu.KotlinLogging
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.requests.GatewayIntent
+import org.jsoup.Jsoup
 import java.awt.Color
+import java.text.NumberFormat
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.system.measureTimeMillis
@@ -38,7 +40,7 @@ object Application {
 
             jda = JDABuilder
                 .createDefault(token)
-                .setActivity(Activity.watching("Installs: ${Installs.getInstalls()}"))
+                .setActivity(Activity.watching("Installs: ${Stats.getInstalls()}"))
                 .addEventListeners(MessageListener(), UserCountListener())
                 .enableIntents(
                     GatewayIntent.MESSAGE_CONTENT,
@@ -53,13 +55,20 @@ object Application {
         }
 
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate({
-            jda.presence.activity = Activity.watching("Installs: ${Installs.getInstalls()}")
+            val installs = Stats.getInstalls()
+            jda.presence.activity = Activity.watching("Installs: $installs")
+            updateGeneralTopic(installs)
         }, 0, 1, TimeUnit.HOURS)
 
         logger.info { "117 Bot Started in $time (ms)" }
     }
 
-
+    private fun updateGeneralTopic(installs : String) {
+        val rank = Stats.getRank()
+        val discordMembers = NumberFormat.getIntegerInstance().format(jda.guilds.first().memberCount)
+        val topic = "Plugin Installs: $installs | Plugin Rank #${rank} | Discord Members: $discordMembers"
+        jda.guilds.first().getTextChannelById(886738668109307935)!!.manager.setTopic(topic).queue()
+    }
 
     fun commandsList() : EmbedBuilder {
         val eb = EmbedBuilder()
