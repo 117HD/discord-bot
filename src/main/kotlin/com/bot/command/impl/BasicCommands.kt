@@ -58,6 +58,43 @@ class BasicCommands {
         }
     }
 
+    val installInstructions = listOf(
+        "1: Download RuneLite: https://runelite.net/",
+        "2: Open RuneLite",
+        "3: Click the Wrench on the Top Right of the RuneLite Panel",
+        "4: Click Plugin-Hub at the top",
+        "5: Type 117 HD",
+        "6: Click Install"
+    )
+
+    @DiscordCommand
+    fun install() = buildCommand("install") {
+        setAliases { listOf("download") }
+        description { "How to install 117HD" }
+        embed {
+            val eb = EmbedBuilder()
+            eb.setColor(Color.CYAN)
+            eb.setTitle("How do I Install the Plugin?:")
+
+            eb.addField("",installInstructions.joinToString("\n"),true)
+        }
+        addButtons { listOf(
+            Button.link("https://i.imgur.com/aTZzsXD.gif", "Video of installing"),
+        )}
+    }
+
+    @DiscordCommand
+    fun runelite() = buildCommand("runelite") {
+        setAliases { listOf("client","rl") }
+        description { "Get all links for Runelite" }
+        message { "Official Runelite Links: " }
+        addButtons { listOf(
+            Button.link("https://runelite.net/", "Website"),
+            Button.link("https://github.com/runelite", "Github"),
+            Button.link("https://runelite.net/discord", "Discord"),
+        )}
+    }
+
     @DiscordCommand
     fun safeMode() = buildCommand("safemode") {
         description { "Post instructions for launching RuneLite in safe mode" }
