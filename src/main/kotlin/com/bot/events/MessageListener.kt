@@ -12,12 +12,9 @@ import net.dv8tion.jda.api.entities.channel.ChannelType
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
-import net.dv8tion.jda.api.interactions.components.ActionRow
-import net.dv8tion.jda.api.interactions.components.ItemComponent
 import net.dv8tion.jda.api.interactions.components.buttons.Button
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 import java.io.File
-import java.util.concurrent.CompletableFuture
 
 class MessageListener : ListenerAdapter() {
 
@@ -49,7 +46,7 @@ class MessageListener : ListenerAdapter() {
                     val downloadLoc = File("${message.id}.txt")
                     downloadLoc.mkdirs()
                     message.attachments[0].proxy.downloadToFile(downloadLoc).thenAccept {
-                        handleLogMessages(it.readText(),event)
+                        handleLogMessages(it.readText(), event)
                         downloadLoc.delete()
                     }
 
@@ -65,7 +62,7 @@ class MessageListener : ListenerAdapter() {
 
     }
 
-    private fun handleLogMessages(content : String, event: MessageReceivedEvent) {
+    private fun handleLogMessages(content: String, event: MessageReceivedEvent) {
         val supportMessage = SupportMessages.values().first { content.contains(it.key) }
 
         val message = MessageCreateBuilder()
@@ -75,13 +72,19 @@ class MessageListener : ListenerAdapter() {
             embed = when(supportMessage) {
                 SupportMessages.LACKS_SUPPORT -> {
                     val isGenericGpu = content.contains("device: GDI Generic")
-                    val is32 = !content.contains("Client is 64-bit")
+                    val is64bit = content.contains("Client is 64-bit")
 
-                    val clientVerMessage = if (is32) "\nif using a 64 bit system please Install the 64-bit version of RuneLite as you are currently on 32\n" else "\n"
-
-                    EmbedBuilder().setTitle(
-                        if(isGenericGpu) "117HD was unable to access your GPU." else "Your GPU is currently not supported by 117HD"
-                    ).addField("","If your system actually has a supported GPU, try the following steps:${clientVerMessage} • If you're on a desktop PC, make sure your monitor is plugged into the graphics card instead of the motherboard's display output.\n•Reinstall the drivers for your graphics card and restart your system.",true).build()
+                    EmbedBuilder()
+                        .setTitle(
+                            if (isGenericGpu) "117HD was unable to access your GPU."
+                            else "Your GPU is currently not supported by 117HD.")
+                        .addField("",
+                            "If you think your system has a GPU that should be supported, please try the following steps:" +
+                            (if (is64bit) "" else "\nIf your system supports it, please install the 64-bit version of RuneLite from their website: https://runelite.net") +
+                            "\n• If you're on a desktop PC, make sure your monitor is plugged into your graphics card instead of the motherboard's display output." +
+                            "\n• Reinstall the drivers for your graphics card and restart your system." +
+                            "\n• If you're on a laptop, it may be necessary to also install Intel or Radeon drivers for integrated graphics.",
+                            true).build()
                 }
                 else -> null
             }
@@ -95,15 +98,14 @@ class MessageListener : ListenerAdapter() {
             SupportMessages.LACKS_SUPPORT -> {
                 message.addActionRow(
                     Button.link("https://www.nvidia.com/download/index.aspx", "Nvidia"),
-                    Button.link("https://www.amd.com/en/support", "Amd"),
-                    Button.link("https://www.intel.co.uk/content/www/uk/en/search.html#sort=relevancy&f:@tabfilter=[Downloads]&f:@stm_10385_en=[Graphics]", "Intel")
+                    Button.link("https://www.amd.com/en/support", "AMD"),
+                    Button.link("https://www.intel.com/content/www/us/en/download-center/home.html", "Intel")
                 )
 
             }
         }
 
         event.channel.sendMessage(message.build()).queue()
-
     }
 
     override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {

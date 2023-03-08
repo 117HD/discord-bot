@@ -1,11 +1,9 @@
 package com.bot.utils
 
-import org.apache.commons.lang.StringUtils
 import org.jsoup.Jsoup
 import java.text.NumberFormat
 
 object Stats {
-
     fun getRank(): String {
         return try {
             return  NumberFormat.getIntegerInstance().format(Jsoup.connect("https://api.phstatistics.com/rank/plugin/117hd")
@@ -27,5 +25,4 @@ object Stats {
             "2"
         }
     }
-
 }

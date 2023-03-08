@@ -12,7 +12,6 @@ import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Activity
 import net.dv8tion.jda.api.requests.GatewayIntent
-import org.jsoup.Jsoup
 import java.awt.Color
 import java.text.NumberFormat
 import java.util.concurrent.Executors
@@ -40,7 +39,7 @@ object Application {
 
             jda = JDABuilder
                 .createDefault(token)
-                .setActivity(Activity.watching("Installs: ${Stats.getInstalls()}"))
+                .setActivity(Activity.watching("installs: ${Stats.getInstalls()}"))
                 .addEventListeners(MessageListener(), UserCountListener())
                 .enableIntents(
                     GatewayIntent.MESSAGE_CONTENT,
@@ -56,7 +55,7 @@ object Application {
 
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate({
             val installs = Stats.getInstalls()
-            jda.presence.activity = Activity.watching("Installs: $installs")
+            jda.presence.activity = Activity.watching("installs: $installs")
             updateGeneralTopic(installs)
         }, 0, 1, TimeUnit.HOURS)
 

@@ -59,38 +59,37 @@ class BasicCommands {
     }
 
     val installInstructions = listOf(
-        "1: Download RuneLite: https://runelite.net/",
-        "2: Open RuneLite",
-        "3: Click the Wrench on the Top Right of the RuneLite Panel",
-        "4: Click Plugin-Hub at the top",
-        "5: Type 117 HD",
+        "1: Download RuneLite from their website: https://runelite.net",
+        "2: Launch RuneLite",
+        "3: Click the Wrench icon on the top right of the RuneLite window",
+        "4: Click the Plugin-Hub button on the right side near the top",
+        "5: Search for \"117 HD\"",
         "6: Click Install"
     )
 
     @DiscordCommand
     fun install() = buildCommand("install") {
         setAliases { listOf("download") }
-        description { "How to install 117HD" }
+        description { "Post install instructions for the plugin" }
         embed {
             val eb = EmbedBuilder()
             eb.setColor(Color.CYAN)
-            eb.setTitle("How do I Install the Plugin?:")
-
-            eb.addField("",installInstructions.joinToString("\n"),true)
+            eb.setTitle("How do I install the plugin?")
+            eb.addField("", installInstructions.joinToString("\n"),true)
         }
         addButtons { listOf(
-            Button.link("https://i.imgur.com/aTZzsXD.gif", "Video of installing"),
+            Button.link("https://i.imgur.com/aTZzsXD.gif", "See a video"),
         )}
     }
 
     @DiscordCommand
     fun runelite() = buildCommand("runelite") {
-        setAliases { listOf("client","rl") }
-        description { "Get all links for Runelite" }
-        message { "Official Runelite Links: " }
+        setAliases { listOf("client", "rl") }
+        description { "Post relevant RuneLite links" }
+        message { "Official RuneLite links: " }
         addButtons { listOf(
-            Button.link("https://runelite.net/", "Website"),
-            Button.link("https://github.com/runelite", "Github"),
+            Button.link("https://runelite.net", "Website"),
+            Button.link("https://github.com/runelite", "GitHub"),
             Button.link("https://runelite.net/discord", "Discord"),
         )}
     }
