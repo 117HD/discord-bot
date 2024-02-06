@@ -42,7 +42,7 @@ class MessageListener : ListenerAdapter() {
                     }
                     event.message.delete().queue()
                 }
-                if (message.attachments.count { it.fileName == "client.log" } == 1) {
+                if (message.attachments.count { it.fileExtension == "log" } == 1) {
                     val downloadLoc = File("${message.id}.txt")
                     downloadLoc.mkdirs()
                     message.attachments[0].proxy.downloadToFile(downloadLoc).thenAccept {

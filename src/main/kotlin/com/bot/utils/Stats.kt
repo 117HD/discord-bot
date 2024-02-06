@@ -1,28 +1,43 @@
 package com.bot.utils
 
+import org.apache.commons.lang.StringUtils
 import org.jsoup.Jsoup
 import java.text.NumberFormat
 
 object Stats {
-    fun getRank(): String {
+    fun getInstalls(): String {
+        val runeliteVersion = getRuneliteVerison()
+        if (runeliteVersion == "ERROR") {
+            return "0"
+        }
         return try {
-            return  NumberFormat.getIntegerInstance().format(Jsoup.connect("https://api.phstatistics.com/rank/plugin/117hd")
+            val doc = Jsoup.connect("https://api.runelite.net/runelite-${runeliteVersion}/pluginhub")
                 .userAgent("Mozilla").timeout(3000).ignoreContentType(true)
-                .get().body().text().toInt())
+                .get().body().text()
+
+            NumberFormat.getIntegerInstance().format(StringUtils.substringBetween(doc, "\"117hd\":", ",").toInt())
         } catch (e: Exception) {
             e.printStackTrace()
-            "2"
+            ""
         }
     }
 
-    fun getInstalls(): String {
+    fun getRank(): String {
+        return "2"
+    }
+
+    private fun getRuneliteVerison(): String {
         return try {
-            return NumberFormat.getIntegerInstance().format(Jsoup.connect("https://api.phstatistics.com/installs/plugin/117hd")
+            val doc = Jsoup.connect("https://static.runelite.net/bootstrap.json")
                 .userAgent("Mozilla").timeout(3000).ignoreContentType(true)
-                .get().body().text().toInt())
+                .get()
+
+
+            StringUtils.substringsBetween(doc.body().text(), "\"version\": \"", "\" }").last()
         } catch (e: Exception) {
             e.printStackTrace()
-            "2"
+            "ERROR"
         }
     }
+
 }
