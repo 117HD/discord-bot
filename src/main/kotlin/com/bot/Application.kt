@@ -56,17 +56,9 @@ object Application {
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate({
             val installs = Stats.getInstalls()
             jda.presence.activity = Activity.watching("installs: $installs")
-            updateGeneralTopic(installs)
         }, 0, 1, TimeUnit.HOURS)
 
         logger.info { "117 Bot Started in $time (ms)" }
-    }
-
-    private fun updateGeneralTopic(installs : String) {
-        val rank = Stats.getRank()
-        val discordMembers = NumberFormat.getIntegerInstance().format(jda.guilds.first().memberCount)
-        val topic = "Plugin Installs: $installs | Plugin Rank #${rank} | Discord Members: $discordMembers"
-        jda.guilds.first().getTextChannelById(886738668109307935)!!.manager.setTopic(topic).queue()
     }
 
     fun commandsList() : EmbedBuilder {
