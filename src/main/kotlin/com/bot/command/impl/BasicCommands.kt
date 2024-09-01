@@ -58,6 +58,13 @@ class BasicCommands {
         }
     }
 
+    val missingPlugin = listOf(
+        "1: Close RuneLite",
+        "2: Locate: [%userprofile%\\.runelite\\cache]",
+        "3: delete the folder in there named okhttp",
+        "4: then restart RuneLite and see if it's resolved"
+    )
+
     val installInstructions = listOf(
         "1: Download RuneLite from their website: https://runelite.net",
         "2: Launch RuneLite",
@@ -81,6 +88,29 @@ class BasicCommands {
             Button.link("https://i.imgur.com/aTZzsXD.gif", "See a video"),
         )}
     }
+
+    @DiscordCommand
+    fun autumn() = buildCommand("autumn") {
+        description { "Autumn Mode Config" }
+        embed {
+            val eb = EmbedBuilder()
+            eb.setColor(Color(205, 95, 24))
+            eb.setTitle("Autumn is Here: How to Revert Your Game's Look to the Original [Summer (Default look)]")
+            eb.setImage("https://media.discordapp.net/attachments/1220742338192609350/1279861777089433751/EmSiwFS.gif?ex=66d5fbaa&is=66d4aa2a&hm=ad62e59125caf764b13d53c347c96cfbcb86eb05447d1a9b8c9ee8ddb52e7254&=")
+        }
+    }
+
+    @DiscordCommand
+    fun missing() = buildCommand("missing") {
+        description { "Missing Plugin" }
+        embed {
+            val eb = EmbedBuilder()
+            eb.setColor(Color.CYAN)
+            eb.setTitle("Missing Plugin?")
+            eb.addField("", missingPlugin.joinToString("\n"),true)
+        }
+    }
+
 
     @DiscordCommand
     fun runelite() = buildCommand("runelite") {
