@@ -24,8 +24,7 @@ object PropertiesManager {
 }
 
 enum class PropertiesData(val key : String) {
-    BOT_KEY("bot.key"),
-    BOT_PREFIX("bot.prefix");
+    BOT_KEY("bot.key");
 
     companion object {
         fun getPropString(prop : PropertiesData) : String? {

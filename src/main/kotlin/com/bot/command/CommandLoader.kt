@@ -1,9 +1,12 @@
 package com.bot.command
 
 import com.bot.Application.jda
+import com.bot.LogInstructions
 import mu.KotlinLogging
 import net.dv8tion.jda.api.interactions.commands.build.Commands
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
+import net.dv8tion.jda.api.interactions.commands.OptionType
+import net.dv8tion.jda.api.interactions.commands.build.OptionData
 import org.reflections.Reflections
 import org.reflections.scanners.Scanners
 import org.reflections.util.ClasspathHelper
@@ -34,7 +37,21 @@ object CommandLoader {
         logger.info { "Commands Loaded in $time ms [Commands Registered ${commands.size}]" }
         val list = emptyList<SlashCommandData>().toMutableList()
         commandsSlash.forEach {
-            list.add(Commands.slash(it.key.lowercase(),it.value))
+            val name = it.key.lowercase()
+            val data = Commands.slash(name,it.value)
+            if (name == "logs" || name == "errors") {
+                val platformOption = OptionData(
+                    OptionType.STRING,
+                    "platform",
+                    "Choose the platform you are using. If omitted, the channel determines it.",
+                    false
+                )
+                LogInstructions.choices().forEach { (label, value) ->
+                    platformOption.addChoice(label, value)
+                }
+                data.addOptions(platformOption)
+            }
+            list.add(data)
         }
 
         jda.guilds.first().updateCommands().addCommands(list).queue()

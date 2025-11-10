@@ -1,6 +1,7 @@
 package com.bot.command.impl
 
 import com.bot.Application
+import com.bot.LogInstructions
 import com.bot.command.DiscordCommand
 import com.bot.command.buildCommand
 import net.dv8tion.jda.api.EmbedBuilder
@@ -43,18 +44,10 @@ class BasicCommands {
             val eb = EmbedBuilder()
             eb.setColor(Color.CYAN)
             eb.setTitle("Accessing Your RuneLite Log Files:")
-            eb.addField("Windows:",
-                "Press the Windows key + R, then paste in the following path into the popup window:\n" +
-                "```\n%userprofile%/.runelite/logs\n```\n" +
-                "Once you are there, drag `client` or `client.log` into this Discord channel.",false)
-            eb.addField("macOS:",
-                "Open Finder and press Cmd + Shift + G, then paste the following path into the popup window:\n" +
-                "```\n~/.runelite/logs\n```\n" +
-                "Once you are there, drag `client` or `client.log` into this Discord channel.",false)
-            eb.addField("Linux:",
-                "Navigate to the following path in a file browser:\n" +
-                "```\n~/.runelite/logs\n```\n" +
-                "Once you are there, drag `client` or `client.log` into this Discord channel.",false)
+            LogInstructions.all.forEach {
+                eb.addField("${it.label}:", it.description, false)
+            }
+            eb
         }
     }
 
@@ -108,6 +101,27 @@ class BasicCommands {
             eb.setColor(Color.CYAN)
             eb.setTitle("Missing Plugin?")
             eb.addField("", missingPlugin.joinToString("\n"),true)
+        }
+    }
+
+    @DiscordCommand
+    fun zbuffering() = buildCommand("zbuffering") {
+        setAliases { listOf("zbuffer") }
+        description { "Explain the Z-buffering changes introduced for Sailing" }
+        embed {
+            val eb = EmbedBuilder()
+            eb.setColor(Color(0x66, 0x99, 0xCC))
+            eb.setTitle("Why does the world flicker after the Sailing update?")
+            eb.setDescription(
+                "In order for Sailing to work, Jagex are rendering the game a little bit differently than before, referred to as Z-buffering. This currently still breaks some things, and may cause flickering whenever two surfaces line up exactly. Jagex are still working on fixing the issues introduced by this change, and it will likely take a while before everything is fixed."
+            )
+            eb.addField(
+                "Like, for example…",
+                "Here’s a real scene that shows the objects rendering wrong.",
+                false
+            )
+            eb.setImage("https://media.discordapp.net/attachments/1419633364817674351/1435701805475434578/image.png?ex=6912dbc0&is=69118a40&hm=d555769211e529d67c9175b88740382c417f2da691aaccdbb50a60f57fd45b09&=&format=webp&quality=lossless&width=1308&height=874")
+            eb
         }
     }
 

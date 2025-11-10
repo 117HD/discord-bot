@@ -18,7 +18,6 @@ This Repository contains the discord bot for 117 Plugin
 
 ```properties
 bot.key=KEY_HERE
-bot.prefix=<
 ```
 3) Import and press Run
 

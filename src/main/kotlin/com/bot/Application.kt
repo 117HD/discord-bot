@@ -4,7 +4,6 @@ import com.bot.PropertiesData.Companion.getPropString
 import com.bot.command.CommandLoader
 import com.bot.command.commands
 import com.bot.events.MessageListener
-import com.bot.events.UserCountListener
 import com.bot.utils.Stats
 import mu.KotlinLogging
 import net.dv8tion.jda.api.EmbedBuilder
@@ -40,7 +39,7 @@ object Application {
             jda = JDABuilder
                 .createDefault(token)
                 .setActivity(Activity.watching("installs: ${Stats.getInstalls()}"))
-                .addEventListeners(MessageListener(), UserCountListener())
+                .addEventListeners(MessageListener())
                 .enableIntents(
                     GatewayIntent.MESSAGE_CONTENT,
                     GatewayIntent.DIRECT_MESSAGES,

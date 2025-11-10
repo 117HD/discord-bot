@@ -1,8 +1,6 @@
 package com.bot.events
 
-import com.bot.Application.banned
-import com.bot.PropertiesData
-import com.bot.PropertiesData.Companion.getPropString
+import com.bot.LogInstructions
 import com.bot.SupportMessages
 import com.bot.command.commands
 import mu.KotlinLogging
@@ -16,6 +14,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
+import java.awt.Color
 import java.io.File
 
 class MessageListener : ListenerAdapter() {
@@ -24,18 +23,8 @@ class MessageListener : ListenerAdapter() {
 
     override fun onMessageReceived(event: MessageReceivedEvent) {
         val message: Message = event.message
-        val msg: String = message.contentDisplay
-
         when(val channel = event.channel) {
             is GuildMessageChannel -> {
-                if(msg.startsWith(getPropString(PropertiesData.BOT_PREFIX)!!,true)) {
-                    val parts = msg.split(" ",ignoreCase = true)
-                    val commandName = parts[0].lowercase().replace(getPropString(PropertiesData.BOT_PREFIX)!!,"")
-                    when(commands.containsKey(commandName))  {
-                        true ->  commands[parts[0].lowercase().replace(getPropString(PropertiesData.BOT_PREFIX)!!,"")]!!.execute(parts.drop(1).toTypedArray(),event)
-                        false -> event.author.openPrivateChannel().flatMap { it.sendMessage("Command '$msg' not found") }.queue()
-                    }
-                }
                 if (message.attachments.count { it.fileExtension == "log" } == 1) {
                     val downloadLoc = File("${message.id}.txt")
                     message.attachments.first { it.fileExtension == "log" }
@@ -105,9 +94,40 @@ class MessageListener : ListenerAdapter() {
     }
 
     override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
-        if(commands.containsKey(event.name)) {
-            event.reply(commands[event.name]!!.execute().build()).queue()
+        when (event.name.lowercase()) {
+            "logs", "errors" -> handleLogsSlash(event)
+            else -> {
+                val command = commands[event.name.lowercase()]
+                if (command != null) {
+                    event.reply(command.execute().build()).queue()
+                } else {
+                    event.reply("Command '${event.name}' not found.").setEphemeral(true).queue()
+                }
+            }
         }
+    }
+
+    private fun handleLogsSlash(event: SlashCommandInteractionEvent) {
+        val platform = event.getOption("platform")?.asString?.lowercase()
+        val inferredPlatform = event.channel?.let { LogInstructions.platformForChannel(it.idLong) }
+        val resolvedPlatform = platform ?: inferredPlatform
+        val instruction = resolvedPlatform?.let { LogInstructions.forPlatform(it) }
+
+        if (instruction == null) {
+            event.reply(
+                "Unsupported platform. Please choose one of: ${LogInstructions.choices().joinToString { it.first }}."
+            )
+                .setEphemeral(true)
+                .queue()
+            return
+        }
+
+        val embed = EmbedBuilder()
+            .setColor(Color.CYAN)
+            .setTitle("RuneLite log file location (${instruction.label})")
+            .setDescription(instruction.description)
+
+        event.replyEmbeds(embed.build()).queue()
     }
 
 }
