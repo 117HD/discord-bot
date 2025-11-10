@@ -7,12 +7,14 @@ import com.bot.SupportMessages
 import com.bot.command.commands
 import mu.KotlinLogging
 import net.dv8tion.jda.api.EmbedBuilder
-import net.dv8tion.jda.api.entities.*
-import net.dv8tion.jda.api.entities.channel.ChannelType
+import net.dv8tion.jda.api.components.actionrow.ActionRow
+import net.dv8tion.jda.api.components.buttons.Button
+import net.dv8tion.jda.api.entities.Message
+import net.dv8tion.jda.api.entities.channel.concrete.PrivateChannel
+import net.dv8tion.jda.api.entities.channel.middleman.GuildMessageChannel
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
-import net.dv8tion.jda.api.interactions.components.buttons.Button
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 import java.io.File
 
@@ -24,15 +26,8 @@ class MessageListener : ListenerAdapter() {
         val message: Message = event.message
         val msg: String = message.contentDisplay
 
-        val words = msg.lowercase().split("\\s+".toRegex())
-        val containsBadWords = words.firstOrNull { it in banned } != null
-
-        if(containsBadWords) {
-            event.message.delete().queue()
-        }
-
-        when(event.channelType) {
-            ChannelType.TEXT -> {
+        when(val channel = event.channel) {
+            is GuildMessageChannel -> {
                 if(msg.startsWith(getPropString(PropertiesData.BOT_PREFIX)!!,true)) {
                     val parts = msg.split(" ",ignoreCase = true)
                     val commandName = parts[0].lowercase().replace(getPropString(PropertiesData.BOT_PREFIX)!!,"")
@@ -40,12 +35,11 @@ class MessageListener : ListenerAdapter() {
                         true ->  commands[parts[0].lowercase().replace(getPropString(PropertiesData.BOT_PREFIX)!!,"")]!!.execute(parts.drop(1).toTypedArray(),event)
                         false -> event.author.openPrivateChannel().flatMap { it.sendMessage("Command '$msg' not found") }.queue()
                     }
-                    event.message.delete().queue()
                 }
                 if (message.attachments.count { it.fileExtension == "log" } == 1) {
                     val downloadLoc = File("${message.id}.txt")
-                    downloadLoc.mkdirs()
-                    message.attachments[0].proxy.downloadToFile(downloadLoc).thenAccept {
+                    message.attachments.first { it.fileExtension == "log" }
+                        .proxy.downloadToFile(downloadLoc).thenAccept {
                         handleLogMessages(it.readText(), event)
                         downloadLoc.delete()
                     }
@@ -53,10 +47,10 @@ class MessageListener : ListenerAdapter() {
                 }
             }
 
-            ChannelType.PRIVATE -> {
-                event.channel.sendMessage("Sorry, our bot only accepts messages in our Discord server.")
+            is PrivateChannel -> {
+                channel.sendMessage("Sorry, our bot only accepts messages in our Discord server.").queue()
             }
-            else -> { logger.info { "Unhandled channel type: ${event.channelType.name}" }  }
+            else -> { logger.info { "Unhandled channel type: ${channel.type.name}" }  }
         }
 
 
@@ -96,10 +90,12 @@ class MessageListener : ListenerAdapter() {
 
         when(supportMessage) {
             SupportMessages.LACKS_SUPPORT -> {
-                message.addActionRow(
-                    Button.link("https://www.nvidia.com/download/index.aspx", "Nvidia"),
-                    Button.link("https://www.amd.com/en/support", "AMD"),
-                    Button.link("https://www.intel.com/content/www/us/en/download-center/home.html", "Intel")
+                message.addComponents(
+                    ActionRow.of(
+                        Button.link("https://www.nvidia.com/download/index.aspx", "Nvidia"),
+                        Button.link("https://www.amd.com/en/support", "AMD"),
+                        Button.link("https://www.intel.com/content/www/us/en/download-center/home.html", "Intel")
+                    )
                 )
 
             }

@@ -2,11 +2,9 @@ package com.bot.command
 
 import com.bot.Application.jda
 import mu.KotlinLogging
-import net.dv8tion.jda.api.interactions.commands.build.CommandData
 import net.dv8tion.jda.api.interactions.commands.build.Commands
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 import org.reflections.Reflections
-import org.reflections.scanners.MethodAnnotationsScanner
 import org.reflections.scanners.Scanners
 import org.reflections.util.ClasspathHelper
 import org.reflections.util.ConfigurationBuilder

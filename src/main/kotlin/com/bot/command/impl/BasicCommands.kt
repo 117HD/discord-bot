@@ -4,8 +4,8 @@ import com.bot.Application
 import com.bot.command.DiscordCommand
 import com.bot.command.buildCommand
 import net.dv8tion.jda.api.EmbedBuilder
+import net.dv8tion.jda.api.components.buttons.Button
 import net.dv8tion.jda.api.entities.emoji.Emoji
-import net.dv8tion.jda.api.interactions.components.buttons.Button
 import java.awt.Color
 
 class BasicCommands {

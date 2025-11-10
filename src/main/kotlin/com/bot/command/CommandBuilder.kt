@@ -3,9 +3,9 @@ package com.bot.command
 import com.bot.Application
 import com.bot.Roles
 import net.dv8tion.jda.api.EmbedBuilder
+import net.dv8tion.jda.api.components.actionrow.ActionRow
+import net.dv8tion.jda.api.components.buttons.Button
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
-import net.dv8tion.jda.api.interactions.components.ActionRow
-import net.dv8tion.jda.api.interactions.components.buttons.Button
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 import kotlin.reflect.KClass
 
@@ -57,7 +57,7 @@ class CommandBuilder(var command : String, val types: List<KClass<out Any>>) {
             }
 
             if (buttons.isNotEmpty()) {
-                messageData.addActionRow(buttons)
+                messageData.addComponents(ActionRow.of(buttons))
             }
 
             if(private) {
