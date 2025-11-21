@@ -155,7 +155,7 @@ class BasicCommands {
             eb.setTitle("AMD Driver Issues")
             eb.setDescription(
                 """
-                AMD and Windows have shipped some faulty OpenGL drivers and as a result, causes the plugin to fail. Rolling your GPU drivers back to October the 29th has been the most successful in resolving this issue.
+                AMD and Windows have shipped some faulty OpenGL drivers and as a result, the plugin fails to turn on. Rolling back your GPU drivers will likely resolve this issue. See the Video Guide linked to at the bottom, or follow the instructions below to reinstall an older version manually:
                 
                 **Steps to roll back drivers:**
                 1. Go to https://www.amd.com/en/support/download/drivers.html and scroll down to the browse products section
