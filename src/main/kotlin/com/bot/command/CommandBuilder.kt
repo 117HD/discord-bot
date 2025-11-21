@@ -83,11 +83,7 @@ class CommandBuilder(var command : String, val types: List<KClass<out Any>>) {
         }
 
         if (buttons.isNotEmpty()) {
-            val rows: MutableList<ActionRow> = emptyList<ActionRow>().toMutableList()
-            buttons.forEach {
-                rows.add(ActionRow.of(it))
-            }
-            messageData.addComponents(rows)
+            messageData.addComponents(ActionRow.of(buttons))
         }
 
         return messageData

@@ -127,6 +127,8 @@ class MessageListener : ListenerAdapter() {
             .setTitle("RuneLite log file location (${instruction.label})")
             .setDescription(instruction.description)
 
+        instruction.imageUrl?.let { embed.setImage(it) }
+
         event.replyEmbeds(embed.build()).queue()
     }
 

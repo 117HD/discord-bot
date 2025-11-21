@@ -43,7 +43,7 @@ class BasicCommands {
         embed {
             val eb = EmbedBuilder()
             eb.setColor(Color.CYAN)
-            eb.setTitle("Accessing Your RuneLite Log Files:")
+            eb.setTitle("Accessing RuneLite's log files:")
             LogInstructions.all.forEach {
                 eb.addField("${it.label}:", it.description, false)
             }
@@ -51,12 +51,6 @@ class BasicCommands {
         }
     }
 
-    val missingPlugin = listOf(
-        "1: Close RuneLite",
-        "2: Locate: [%userprofile%\\.runelite\\cache]",
-        "3: delete the folder in there named okhttp",
-        "4: then restart RuneLite and see if it's resolved"
-    )
 
     val installInstructions = listOf(
         "1: Download RuneLite from their website: https://runelite.net",
@@ -100,7 +94,20 @@ class BasicCommands {
             val eb = EmbedBuilder()
             eb.setColor(Color.CYAN)
             eb.setTitle("Missing Plugin?")
-            eb.addField("", missingPlugin.joinToString("\n"),true)
+            eb.setDescription(
+                """
+                This happens occasionally when the plugin fails to update. The two things to try are:
+                
+                • Press Windows key + R and paste in:
+                ```
+                %userprofile%/.runelite/cache
+                ```
+                and delete the folder called `okhttp`, then restart RuneLite
+                
+                • If that doesn't work, try connecting either your mobile internet to your PC, or use a VPN, and see if RuneLite successfully updates the plugin then
+                """.trimIndent()
+            )
+            eb
         }
     }
 
@@ -117,7 +124,7 @@ class BasicCommands {
             )
             eb.addField(
                 "Like, for example…",
-                "Here’s a real scene that shows the objects rendering wrong.",
+                "Here's a real scene that shows the objects rendering wrong.",
                 false
             )
             eb.setImage("https://media.discordapp.net/attachments/1419633364817674351/1435701805475434578/image.png?ex=6912dbc0&is=69118a40&hm=d555769211e529d67c9175b88740382c417f2da691aaccdbb50a60f57fd45b09&=&format=webp&quality=lossless&width=1308&height=874")
@@ -125,6 +132,46 @@ class BasicCommands {
         }
     }
 
+    @DiscordCommand
+    fun legacy() = buildCommand("legacy") {
+        description { "Explain the legacy renderer limitations with Sailing" }
+        embed {
+            val eb = EmbedBuilder()
+            eb.setColor(Color.CYAN)
+            eb.setDescription(
+                "The legacy renderer does not support sailing and will no longer be receiving updates, go to the Legacy section in the 117HD settings to disable it. This should resolve any issues with invisible boats or objects."
+            )
+            eb.setImage("https://media.discordapp.net/attachments/1220742338192609350/1441271093154287849/image.png?ex=69212fce&is=691fde4e&hm=7b358bd463228847cbe561bc5d76fd49bbda379622ab68639ccb2f54920abda0&=&format=webp&quality=lossless")
+            eb
+        }
+    }
+
+    @DiscordCommand
+    fun amddrivers() = buildCommand("amddrivers") {
+        description { "Help with AMD driver issues causing plugin failures" }
+        embed {
+            val eb = EmbedBuilder()
+            eb.setColor(Color.CYAN)
+            eb.setTitle("AMD Driver Issues")
+            eb.setDescription(
+                """
+                AMD and Windows have shipped some faulty OpenGL drivers and as a result, causes the plugin to fail. Rolling your GPU drivers back to October the 29th has been the most successful in resolving this issue.
+                
+                **Steps to roll back drivers:**
+                1. Go to https://www.amd.com/en/support/download/drivers.html and scroll down to the browse products section
+                2. Choose your GPU from the selection
+                3. Scroll down to previous versions
+                4. Select your OS
+                5. Download the drivers dated 2025-10-29 and run the installer, it will handle the removal of the old drivers
+                """.trimIndent()
+            )
+            eb
+        }
+        addButtons { listOf(
+            Button.link("https://www.amd.com/en/support/download/drivers.html", "AMD Drivers"),
+            Button.link("https://www.youtube.com/watch?v=5vkkeb_X9hs", "Video Guide")
+        )}
+    }
 
     @DiscordCommand
     fun runelite() = buildCommand("runelite") {
