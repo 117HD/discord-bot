@@ -174,6 +174,24 @@ class BasicCommands {
     }
 
     @DiscordCommand
+    fun timers() = buildCommand("timers") {
+        description { "Instructions for using the timers feature" }
+        embed {
+            val eb = EmbedBuilder()
+            eb.setColor(Color.CYAN)
+            eb.setDescription(
+                """
+                Type `::117hd timers` in chat to open the timers window, then send a screenshot of the window.
+                
+                Type `::117hd timers` again to close it.
+                """.trimIndent()
+            )
+            eb.setImage("https://media.discordapp.net/attachments/1041155084794466315/1441505177713770678/image.png?ex=692209d0&is=6920b850&hm=4f8719113144f224932e3c75a1c51975f07c9723d0f1156d94e94d3464bcbf05&=&format=webp&quality=lossless")
+            eb
+        }
+    }
+
+    @DiscordCommand
     fun runelite() = buildCommand("runelite") {
         setAliases { listOf("client", "rl") }
         description { "Post relevant RuneLite links" }
