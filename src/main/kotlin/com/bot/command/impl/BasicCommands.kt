@@ -238,4 +238,30 @@ class BasicCommands {
             Button.link("https://github.com/RS117/RLHD/blob/master/settings-guide.md", "Settings Guide"),
         )}
     }
+
+    @DiscordCommand
+    fun memoryLimit() = buildCommand("memory-limit") {
+        setAliases { listOf("memory", "oom") }
+        description { "Post info about OOMs and how to increase the memory limit" }
+        embed {
+            val eb = EmbedBuilder()
+            eb.setColor(Color.CYAN)
+            eb.setTitle("Out of memory (OOM)")
+            eb.setDescription(
+                """
+                If the client is stuttering heavily or crashing while loading new scenes, it's frequently caused by running too close to RuneLite's memory limit. Try uninstalling other hub plugins or increasing the limit.
+                
+                **Steps to increase the memory limit:**
+                1. Open `RuneLite (configure)` from the start menu. If you cannot find it, try installing the latest RuneLite from https://runelite.net.
+                2. In the JVM arguments box, add the following argument on its own line:
+                ```
+                -Xmx2G
+                ```
+                3. Click Save and restart RuneLite to apply the changes.
+                4. If the stutter persists, the issue is likely caused by a hub plugin.
+                """.trimIndent()
+            )
+            eb
+        }
+    }
 }
