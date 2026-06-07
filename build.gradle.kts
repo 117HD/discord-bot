@@ -1,12 +1,7 @@
-
 plugins {
-    application
     id("org.jetbrains.kotlin.jvm") version "2.2.20"
-    id("com.github.johnrengelman.shadow") version "7.0.0"
-}
-
-application {
-    mainClass.set("com.bot.ApplicationKt")
+    application
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "com.bot"
@@ -15,6 +10,7 @@ version = "1.0"
 repositories {
     mavenCentral()
 }
+
 dependencies {
     implementation(kotlin("stdlib"))
 
@@ -24,5 +20,29 @@ dependencies {
     implementation("commons-lang:commons-lang:2.6")
     implementation("org.jsoup:jsoup:1.14.3")
     implementation("org.reflections:reflections:0.10.2")
+}
 
+application {
+    mainClass.set("com.bot.ApplicationKt")
+}
+
+kotlin {
+    jvmToolchain(11)
+}
+
+tasks {
+    shadowJar {
+        archiveBaseName.set("117hd-discord-bot")
+        archiveClassifier.set("")
+        archiveVersion.set("")
+        manifest {
+            attributes(mapOf("Main-Class" to "com.bot.ApplicationKt"))
+        }
+        mergeServiceFiles()
+    }
+
+    named<JavaExec>("run") {
+        isEnabled = false
+        group = null
+    }
 }

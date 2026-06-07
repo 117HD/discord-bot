@@ -1,0 +1,149 @@
+name: Release
+
+permissions:
+  contents: write
+
+on:
+  push:
+    tags:
+      - "v*"
+    branches:
+      - production
+  workflow_dispatch:
+
+concurrency:
+  group: 117hd-discord-bot-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "11"
+          cache: gradle
+
+      - name: Build shadow JAR
+        run: |
+          chmod +x gradlew
+          ./gradlew shadowJar --no-daemon --stacktrace
+
+      - name: Verify JAR output
+        run: test -f build/libs/117hd-discord-bot.jar
+
+      - name: Set release metadata
+        id: meta
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            TAG="${GITHUB_REF_NAME}"
+            NAME="Release ${TAG}"
+          else
+            DATE="$(date -u +'%Y-%m-%d')"
+            BRANCH="${GITHUB_REF_NAME}"
+            BRANCH_TAG="$(echo "$BRANCH" | tr '/' '-')"
+            SHORT_SHA="$(git rev-parse --short HEAD)"
+            TAG="${DATE}-${BRANCH_TAG}-${SHORT_SHA}"
+            NAME="${DATE} - ${BRANCH}"
+          fi
+
+          FULL_SHA="$(git rev-parse HEAD)"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "name=${NAME}" >> "$GITHUB_OUTPUT"
+          echo "short_sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
+          echo "commit_url=${{ github.server_url }}/${{ github.repository }}/commit/${FULL_SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.tag }}
+          name: ${{ steps.meta.outputs.name }}
+          body: |
+            117HD Discord Bot shadow JAR.
+
+            **Commit:** [`${{ steps.meta.outputs.short_sha }}`](${{ steps.meta.outputs.commit_url }})
+
+            ## Run
+            ```bash
+            java -jar 117hd-discord-bot.jar
+            ```
+
+            ## Pterodactyl egg
+            - `JAR_UPDATE_REPO`: `117HD/discord-bot`
+            - `SERVER_JAR`: `117hd-discord-bot.jar`
+          files: build/libs/117hd-discord-bot.jar
+          generate_release_notes: false
+
+  restart-discord-bot:
+    name: Restart Discord bot server
+    needs: release
+    runs-on: ubuntu-latest
+    env:
+      PTERODACTYL_PANEL_URL: https://150.107.201.110
+      PTERODACTYL_SERVER_UUID: ab98672d-8701-438b-ab12-e46dcc801271
+    steps:
+      - name: Kill then start server
+        env:
+          PTERODACTYL_API_TOKEN: ${{ secrets.PTERODACTYL_API_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${PTERODACTYL_API_TOKEN:-}" ]; then
+            echo "Missing secret: PTERODACTYL_API_TOKEN"
+            exit 1
+          fi
+
+          PANEL="${PTERODACTYL_PANEL_URL%/}"
+          IDENTIFIER="${PTERODACTYL_SERVER_UUID%%-*}"
+
+          power_signal() {
+            local signal="$1"
+            local http
+            http="$(curl -sS -k -o /tmp/pterodactyl-response.txt -w '%{http_code}' \
+              -X POST "${PANEL}/api/client/servers/${IDENTIFIER}/power" \
+              -H "Authorization: Bearer ${PTERODACTYL_API_TOKEN}" \
+              -H "Accept: application/json" \
+              -H "Content-Type: application/json" \
+              -d "{\"signal\":\"${signal}\"}")"
+            echo "POST /api/client/servers/${IDENTIFIER}/power signal=${signal} -> HTTP ${http}"
+            case "${http}" in
+              200|204) return 0 ;;
+            esac
+            cat /tmp/pterodactyl-response.txt || true
+            return 1
+          }
+
+          wait_for_state() {
+            local want="$1"
+            local attempts="${2:-30}"
+            local i state
+            for i in $(seq 1 "${attempts}"); do
+              state="$(curl -sS -k \
+                -H "Authorization: Bearer ${PTERODACTYL_API_TOKEN}" \
+                -H "Accept: application/json" \
+                "${PANEL}/api/client/servers/${IDENTIFIER}/resources" \
+                | python3 -c "import json,sys; print(json.load(sys.stdin)['attributes']['current_state'])" 2>/dev/null || echo unknown)"
+              echo "State check ${i}/${attempts}: ${state}"
+              if [ "${state}" = "${want}" ]; then
+                return 0
+              fi
+              sleep 2
+            done
+            return 1
+          }
+
+          power_signal kill
+          wait_for_state offline 30 || wait_for_state stopped 15 || true
+          sleep 3
+          power_signal start
+          wait_for_state running 60 || true
+          echo "Kill + start completed for ${IDENTIFIER} (${PTERODACTYL_SERVER_UUID})"
