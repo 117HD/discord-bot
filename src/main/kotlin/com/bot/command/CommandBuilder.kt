@@ -1,7 +1,6 @@
 package com.bot.command
 
 import com.bot.Application
-import com.bot.Roles
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.components.actionrow.ActionRow
 import net.dv8tion.jda.api.components.buttons.Button
@@ -20,7 +19,6 @@ val commandsSlash : MutableMap<String, String> = emptyMap<String,String>().toMut
 @CommandBuilderDslMarker
 class CommandBuilder(var command : String, val types: List<KClass<out Any>>) {
 
-    var rights: Roles = Roles.EVERYONE
     var description: String = "No description provided"
     var hideFromList: Boolean = false
     var private: Boolean = false
@@ -30,7 +28,6 @@ class CommandBuilder(var command : String, val types: List<KClass<out Any>>) {
     private var message: String? = null
     fun description(builder: () -> String) { this.description = builder() }
     fun sendPrivate(builder: () -> Boolean) { this.private = builder() }
-    fun requiredRoles(builder: () -> Roles) { this.rights = builder() }
     fun hide(builder: () -> Boolean) { this.hideFromList = builder() }
     fun setAliases(builder: () -> List<String>) { this.aliases = builder() }
     fun addButtons(builder: () -> List<Button>) { this.buttons = builder().toMutableList() }

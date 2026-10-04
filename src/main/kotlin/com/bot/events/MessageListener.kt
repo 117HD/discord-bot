@@ -1,6 +1,7 @@
 package com.bot.events
 
 import com.bot.LogInstructions
+import com.bot.OptOutManager
 import com.bot.SupportMessages
 import com.bot.command.commands
 import mu.KotlinLogging
@@ -25,6 +26,10 @@ class MessageListener : ListenerAdapter() {
         val message: Message = event.message
         when(val channel = event.channel) {
             is GuildMessageChannel -> {
+                if (OptOutManager.isOptedOut(message.author.idLong)) {
+                    return
+                }
+
                 if (message.attachments.count { it.fileExtension == "log" } == 1) {
                     val downloadLoc = File("${message.id}.txt")
                     message.attachments.first { it.fileExtension == "log" }
@@ -96,6 +101,20 @@ class MessageListener : ListenerAdapter() {
     override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
         when (event.name.lowercase()) {
             "logs", "errors" -> handleLogsSlash(event)
+            "optout" -> {
+                val added = OptOutManager.optOut(event.user.idLong)
+                event.reply(
+                    if (added) "You've been opted out. The bot will no longer scan `.log` files you upload."
+                    else "You're already opted out."
+                ).setEphemeral(true).queue()
+            }
+            "optin" -> {
+                val removed = OptOutManager.optIn(event.user.idLong)
+                event.reply(
+                    if (removed) "You've been opted back in. The bot will resume scanning `.log` files you upload."
+                    else "You're not currently opted out."
+                ).setEphemeral(true).queue()
+            }
             else -> {
                 val command = commands[event.name.lowercase()]
                 if (command != null) {

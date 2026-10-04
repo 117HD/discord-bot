@@ -31,6 +31,7 @@ object Application {
         logger.info { "Starting 117 Bot" }
         val time = measureTimeMillis {
             PropertiesManager.loadProps()
+            OptOutManager.load()
             val token = when(args.isNotEmpty()) {
                 true -> args[0].replace("-token:","")
                 false -> getPropString(PropertiesData.BOT_KEY)
@@ -43,9 +44,7 @@ object Application {
                 .enableIntents(
                     GatewayIntent.MESSAGE_CONTENT,
                     GatewayIntent.DIRECT_MESSAGES,
-                    GatewayIntent.GUILD_MEMBERS,
-                    GatewayIntent.GUILD_WEBHOOKS,
-                    GatewayIntent.MESSAGE_CONTENT
+                    GatewayIntent.GUILD_WEBHOOKS
                 )
                 .build()
                 .awaitReady()

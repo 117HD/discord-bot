@@ -54,6 +54,9 @@ object CommandLoader {
             list.add(data)
         }
 
+        list.add(Commands.slash("optout", "Stop the bot from scanning .log files you upload for automatic troubleshooting replies"))
+        list.add(Commands.slash("optin", "Resume the bot scanning .log files you upload for automatic troubleshooting replies"))
+
         jda.guilds.first().updateCommands().addCommands(list).queue()
     }
 
